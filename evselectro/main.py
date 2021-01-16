@@ -8,6 +8,5 @@ from .process_products import process_products
 
 def evselectro(save=True, refresh=False, dl=1):
     dir_ = 'data/evselectro'
-    dir_products = dir_ + '/products'
 
     process_products(dir_=dir_, dl=dl)

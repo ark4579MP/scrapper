@@ -1,6 +1,7 @@
 import os
 import csv
 from models.catagory import Catagory
+from utils.catagory_utils import read_catagories, write_catagories
 from utils.get_soup import get_soup
 
 
@@ -9,19 +10,8 @@ def get_catagories(save=True, dir_=None, refresh=False, dl=2):
 
     URL = 'https://www.evselectro.com/'
 
-    if not refresh and os.path.isfile(catgories_csv_name):
-        if dl >= 2:
-            print("skipping fetching catagories because %s already exists" %
-                  (catgories_csv_name))
-        with open(catgories_csv_name, encoding="utf-8") as f:
-            csv_reader = csv.reader(f)
-            csv_rows = []
-            for row in csv_reader:
-                csv_rows.append(row)
-            csv_rows = csv_rows[1:]
-            catagories = [Catagory(_csv=c) for c in csv_rows]
-            return catagories
-        return
+    if not refresh:
+        read_catagories(dir_=dir_, dl=dl)
 
     if dl >= 1:
         print("Getting Catagories...")
@@ -48,11 +38,6 @@ def get_catagories(save=True, dir_=None, refresh=False, dl=2):
             catagories.append(c)
 
     if save and catagories:
-        catagories_row = [catagories[0].to_csv_header()]
-        catagories_row += [c.to_csv_row() for c in catagories]
-
-        with open(catgories_csv_name, 'w', newline='', encoding="utf-8") as f:
-            csv_writter = csv.writer(f)
-            csv_writter.writerows(catagories_row)
+        write_catagories(dir_=dir_, catagories=catagories, dl=dl)
 
     return catagories
